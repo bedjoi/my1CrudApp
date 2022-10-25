@@ -10,18 +10,21 @@ const {Pool}= require('pg');
 require('dotenv').config();
 
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-app.use(morgan('comon'));
+app.use(morgan('dev'));
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 
 app.get('/',(req,res)=>{
     res.sendFile(path.join(__dirname, 'index.html'));
 })
-app.get('/info/get',(req,res)=>{
+app.get('/info/get', (req,res)=>{
     try {
-        Pool.connect((err, client, release)=>{
+        Pool.connect(async (error, client, release)=>{
+            let resp = await client.query('SELECT * FROM tes');
+            release();
+            res.json(resp.rows);
 
         });
         
